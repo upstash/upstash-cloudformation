@@ -1,0 +1,27 @@
+serviceName: whatevs
+
+resources:
+  testEndpointCreate:
+    type: deployment-script
+    properties:
+      trigger: after:deploy
+      packaging:
+        type: custom-artifact
+        properties:
+          packagePath: ./
+          handler: test-lambda-wrapper/handler.js
+      runtime: nodejs12.x
+      timeout: 10
+      parameters:
+        action: CREATE
+        awsAccountId: "xxxxxxxxx"
+        request:
+          clientRequestToken: 4b90a7e4-b790-456b-a937-0cfdfa211dfe
+          desiredResourceState:
+            databaseID: 943f09dd-945d-489c-868a-a1e5eadcd6ea
+            apiCredentials:
+              email: simon.obetko@stacktape.com
+              key: $Secret('upstash-api-key')
+      environment:
+        - name: UPSTASH_API_KEY
+          value: $Secret('upstash-api-key')

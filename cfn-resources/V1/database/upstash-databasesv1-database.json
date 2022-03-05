@@ -1,0 +1,104 @@
+{
+  "typeName": "Upstash::DatabasesV1::Database",
+  "description": "Provisions Upstash Redis Database resource.",
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "definitions": {
+    "APICredentials": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string"
+        },
+        "Key": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["Email", "Key"]
+    }
+  },
+  "properties": {
+    "DatabaseName": {
+      "description": "Name of the database",
+      "type": "string"
+    },
+    "Region": {
+      "description": "Region of the database",
+      "type": "string",
+      "enum": ["eu-west-1", "us-east-1"]
+    },
+    "DatabaseID": {
+      "description": "ID of the database",
+      "type": "string"
+    },
+    "Port": {
+      "description": "Database port for clients to connect",
+      "type": "string"
+    },
+    "CreationTime": {
+      "description": "Creation time of the database as Unix time",
+      "type": "number"
+    },
+    "State": {
+      "description": "State of database (active or deleted)",
+      "type": "string"
+    },
+    "Password": {
+      "type": "string"
+    },
+    "ApiCredentials": {
+      "$ref": "#/definitions/APICredentials"
+    },
+    "Endpoint": {
+      "type": "string"
+    },
+    "Tls": {
+      "description": "Whether tls is enabled",
+      "type": "boolean"
+    },
+    "Multizone": {
+      "type": "boolean"
+    },
+    "Consistent": {
+      "type": "boolean"
+    },
+    "RestToken": {
+      "type": "string"
+    },
+    "ReadOnlyRestToken": {
+      "type": "string"
+    },
+    "ForceUpdate": {
+      "description": "Support random number (different to number used in the previous deploy) to force update and refreshment of GetAtt methods",
+      "type": "number"
+    }
+  },
+  "additionalProperties": false,
+  "required": ["DatabaseName", "Region", "ApiCredentials"],
+  "readOnlyProperties": [
+    "/properties/DatabaseID",
+    "/properties/Endpoint",
+    "/properties/Port",
+    "/properties/State",
+    "/properties/CreationTime",
+    "/properties/Password",
+    "/properties/RestToken",
+    "/properties/ReadOnlyRestToken"
+  ],
+  "primaryIdentifier": ["/properties/DatabaseID"],
+  "writeOnlyProperties": ["/properties/ApiCredentials"],
+  "handlers": {
+    "create": {
+      "permissions": ["ssm:PutParameter"]
+    },
+    "read": {
+      "permissions": ["ssm:GetParameter"]
+    },
+    "update": {
+      "permissions": ["ssm:GetParameter", "ssm:PutParameter"]
+    },
+    "delete": {
+      "permissions": ["ssm:DeleteParameter", "ssm:GetParameter"]
+    }
+  }
+}
