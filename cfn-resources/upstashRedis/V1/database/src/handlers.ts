@@ -3,7 +3,6 @@ import {
   BaseResource,
   exceptions,
   handlerEvent,
-  HandlerErrorCode,
   LoggerProxy,
   OperationStatus,
   Optional,
@@ -83,7 +82,7 @@ class Resource extends BaseResource<ResourceModel> {
 
       await putApiCredentialsIntoParameterStore({
         apiCreds: model.apiCredentials,
-        databsePrimaryIdentifier: model.databaseID,
+        databasePrimaryIdentifier: model.databaseID,
         ssmCli: session.client<SSM>("SSM"),
       });
 
@@ -154,9 +153,12 @@ class Resource extends BaseResource<ResourceModel> {
       }
       if (model.tls !== response.tls) {
         if (response.tls && !model.tls) {
-          throw new Error(
-            "It is not possible to disable tls for Upstash redis database once it was enabled."
-          );
+          // Tls cannot be disabled once it was enabled. However if such request is given, we will simply ignore it.
+          // This is due to possible problems with potential rollback
+          // In future we might throw an error.
+          // throw new Error(
+          //   "It is not possible to disable tls for Upstash redis database once it was enabled."
+          // );
         }
         response = await fetch(
           `https://api.upstash.com/v2/redis/enable-tls/${model.databaseID}`,
@@ -173,9 +175,12 @@ class Resource extends BaseResource<ResourceModel> {
       }
       if (model.multizone !== response.multizone) {
         if (response.multizone && !model.multizone) {
-          throw new Error(
-            "It is not possible to disable multizone replication for Upstash redis database once it was enabled."
-          );
+          // Multizone cannot be disabled once it was enabled. However if such request is given, we will simply ignore it.
+          // This is due to possible problems with potential rollback
+          // In future we might throw an error.
+          // throw new Error(
+          //   "It is not possible to disable multizone replication for Upstash redis database once it was enabled."
+          // );
         }
         response = await fetch(
           `https://api.upstash.com/v2/redis/enable-multizone/${model.databaseID}`,
@@ -205,7 +210,7 @@ class Resource extends BaseResource<ResourceModel> {
 
       await putApiCredentialsIntoParameterStore({
         apiCreds: model.apiCredentials,
-        databsePrimaryIdentifier: model.databaseID,
+        databasePrimaryIdentifier: model.databaseID,
         ssmCli: session.client<SSM>("SSM"),
       });
 
@@ -263,7 +268,7 @@ class Resource extends BaseResource<ResourceModel> {
       });
 
       await deleteApiCredentialsFromParameterStore({
-        databsePrimaryIdentifier: model.databaseID,
+        databasePrimaryIdentifier: model.databaseID,
         ssmCli: session.client<SSM>("SSM"),
       });
     } catch (err) {
@@ -301,7 +306,7 @@ class Resource extends BaseResource<ResourceModel> {
       );
     try {
       const apiCredentials = await getApiCredentialsFromParameterStore({
-        databsePrimaryIdentifier: model.databaseID,
+        databasePrimaryIdentifier: model.databaseID,
         ssmCli: session.client<SSM>("SSM"),
       });
       const response: UpstashDatabaseInfoResponse = await fetch(

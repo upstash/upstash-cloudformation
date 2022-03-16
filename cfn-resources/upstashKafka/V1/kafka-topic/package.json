@@ -1,0 +1,29 @@
+{
+  "name": "upstash-kafkav1-topic",
+  "version": "0.1.0",
+  "description": "AWS custom resource provider named Upstash::KafkaV1::Topic.",
+  "private": true,
+  "main": "dist/handlers.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc",
+    "prepack": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@amazon-web-services-cloudformation/cloudformation-cli-typescript-lib": "^1.0.1",
+    "@aws-sdk/client-ssm": "^3.53.0",
+    "class-transformer": "0.3.1",
+    "node-fetch": "2.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.0",
+    "@types/node-fetch": "^2.6.1",
+    "typescript": "^4.1.2"
+  },
+  "optionalDependencies": {
+    "aws-sdk": "^2.1084.0"
+  }
+}

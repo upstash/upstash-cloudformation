@@ -23,18 +23,18 @@ export const handleResponseFromUpstash = async (response: Response) => {
 };
 
 const buildApiCredentialsParameterName = (
-  databasePrimaryIdentifier: string
+  kafkaClusterPrimaryIdentifier: string
 ) => {
-  return `/stp/upstashdatabasev1/${databasePrimaryIdentifier}`;
+  return `/stp/upstashkafkaclusterv1/${kafkaClusterPrimaryIdentifier}`;
 };
 
 export const putApiCredentialsIntoParameterStore = async ({
   apiCreds,
-  databsePrimaryIdentifier,
+  kafkaClusterPrimaryIdentifier,
   ssmCli,
 }: {
   apiCreds: APICredentials;
-  databsePrimaryIdentifier: string;
+  kafkaClusterPrimaryIdentifier: string;
   ssmCli: SSM;
 }) => {
   const apiCredentials: StoredApiCredentials = {
@@ -43,7 +43,7 @@ export const putApiCredentialsIntoParameterStore = async ({
   };
   return ssmCli
     .putParameter({
-      Name: buildApiCredentialsParameterName(databsePrimaryIdentifier),
+      Name: buildApiCredentialsParameterName(kafkaClusterPrimaryIdentifier),
       Overwrite: true,
       Value: JSON.stringify(apiCredentials),
       Type: ParameterType.SECURE_STRING,
@@ -52,17 +52,17 @@ export const putApiCredentialsIntoParameterStore = async ({
 };
 
 export const getApiCredentialsFromParameterStore = async ({
-  databsePrimaryIdentifier,
+  kafkaClusterPrimaryIdentifier,
   ssmCli,
 }: {
-  databsePrimaryIdentifier: string;
+  kafkaClusterPrimaryIdentifier: string;
   ssmCli: SSM;
 }): Promise<StoredApiCredentials> => {
   const {
     Parameter: { Value },
   } = await ssmCli
     .getParameter({
-      Name: buildApiCredentialsParameterName(databsePrimaryIdentifier),
+      Name: buildApiCredentialsParameterName(kafkaClusterPrimaryIdentifier),
       WithDecryption: true,
     })
     .promise();
@@ -71,15 +71,15 @@ export const getApiCredentialsFromParameterStore = async ({
 };
 
 export const deleteApiCredentialsFromParameterStore = async ({
-  databsePrimaryIdentifier,
+  kafkaClusterPrimaryIdentifier,
   ssmCli,
 }: {
-  databsePrimaryIdentifier: string;
+  kafkaClusterPrimaryIdentifier: string;
   ssmCli: SSM;
 }) => {
   return ssmCli
     .deleteParameter({
-      Name: buildApiCredentialsParameterName(databsePrimaryIdentifier),
+      Name: buildApiCredentialsParameterName(kafkaClusterPrimaryIdentifier),
     })
     .promise();
 };
@@ -89,20 +89,21 @@ type StoredApiCredentials = {
   key: string;
 };
 
-export type UpstashDatabaseInfoResponse = {
-  database_id: string;
-  database_name: string;
-  database_type: string;
+export type UpstashKafkaClusterInfoResponse = {
+  cluster_id: string;
+  name: string;
   region: string;
-  port: number;
-  creation_time: number;
-  state: "active" | "deleted";
-  password: string;
-  user_email: string;
-  endpoint: string;
-  tls: boolean;
+  type: string;
   multizone: boolean;
-  consistent: boolean;
-  rest_token?: string;
-  read_only_rest_token?: string;
+  tcp_endpoint: string;
+  rest_endpoint: string;
+  state: string;
+  username: string;
+  password: string;
+  max_retention_size: number;
+  max_retention_time: number;
+  max_messages_per_second: number;
+  creation_time: number;
+  max_message_size: number;
+  max_partitions: number;
 };

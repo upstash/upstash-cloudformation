@@ -1,0 +1,92 @@
+{
+  "typeName": "Upstash::KafkaV1::Cluster",
+  "description": "Provisions Upstash Kafka cluster.",
+  "sourceUrl": "https://github.com/aws-cloudformation/aws-cloudformation-rpdk.git",
+  "definitions": {
+    "APICredentials": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string"
+        },
+        "Key": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["Email", "Key"]
+    }
+  },
+  "properties": {
+    "ClusterName": {
+      "description": "Name of the cluster",
+      "type": "string"
+    },
+    "Region": {
+      "description": "Region of the cluster",
+      "type": "string",
+      "enum": ["eu-west-1", "us-east-1"]
+    },
+    "ClusterID": {
+      "description": "ID of the cluster",
+      "type": "string"
+    },
+    "CreationTime": {
+      "description": "Creation time of the cluster as Unix time",
+      "type": "number"
+    },
+    "State": {
+      "description": "State of cluster (active or deleted)",
+      "type": "string"
+    },
+    "Username": {
+      "type": "string"
+    },
+    "Password": {
+      "type": "string"
+    },
+    "ApiCredentials": {
+      "$ref": "#/definitions/APICredentials"
+    },
+    "TcpEndpoint": {
+      "type": "string"
+    },
+    "RestEndpoint": {
+      "type": "string"
+    },
+    "Multizone": {
+      "type": "boolean"
+    },
+    "ForceUpdate": {
+      "description": "Support random number (different to number used in the previous deploy) to force update and refreshment of GetAtt methods",
+      "type": "number"
+    }
+  },
+  "additionalProperties": false,
+  "required": ["ClusterName", "Region", "ApiCredentials"],
+  "readOnlyProperties": [
+    "/properties/ClusterID",
+    "/properties/TcpEndpoint",
+    "/properties/RestEndpoint",
+    "/properties/Username",
+    "/properties/State",
+    "/properties/CreationTime",
+    "/properties/Password"
+  ],
+  "primaryIdentifier": ["/properties/ClusterID"],
+  "writeOnlyProperties": ["/properties/ApiCredentials"],
+  "handlers": {
+    "create": {
+      "permissions": ["ssm:PutParameter"]
+    },
+    "read": {
+      "permissions": ["ssm:GetParameter"]
+    },
+    "update": {
+      "permissions": ["ssm:GetParameter", "ssm:PutParameter"]
+    },
+    "delete": {
+      "permissions": ["ssm:DeleteParameter", "ssm:GetParameter"]
+    }
+  }
+}
